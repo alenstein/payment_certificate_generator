@@ -6,26 +6,186 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>990</width>
+    <height>822</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Payment Certificates Generator</string>
   </property>
-  <widget class="QWidget" name="centralwidget"/>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>800</width>
-     <height>26</height>
-    </rect>
-   </property>
+  <property name="styleSheet">
+   <string notr="true">
+    /* Global widget styling */
+    QWidget {
+    font-family: Inter, sans-serif;
+    }
+    QMainWindow {
+    background-color: #F9FAFB; /* bg-gray-50 */
+    }
+    QLabel#headerTitleLabel {
+    font-size: 18px; font-weight: 600; color: #111827; padding: 20px;
+    }
+    QLabel#mainTitleLabel {
+    font-size: 36px; font-weight: 700; color: #111827; qproperty-alignment: AlignCenter;
+    }
+    QLabel#subtitleLabel {
+    font-size: 16px; color: #4B5563; qproperty-alignment: AlignCenter; word-wrap: true;
+    }
+    QPushButton#viewProjectsButton {
+    background-color: #2D3748; color: white; padding: 10px 20px; border-radius: 6px;
+    font-size: 14px; font-weight: 500; border: none; min-width: 150px; max-width: 200px;
+    }
+    QPushButton#viewProjectsButton:hover { background-color: #1A202C; }
+    QPushButton#createProjectButton {
+    background-color: #E2E8F0; color: #2D3748; padding: 10px 20px; border-radius: 6px;
+    font-size: 14px; font-weight: 500; border: 1px solid #CBD5E0; min-width: 150px; max-width: 200px;
+    }
+    QPushButton#createProjectButton:hover { background-color: #CBD5E0; }
+
+    /* Styling for the features container and cards */
+    QWidget#featuresContainer {
+    /* No specific style needed for the container itself unless for debugging borders */
+    }
+    QFrame[objectName^="featureCard"] {
+    background-color: white; border: 1px solid #E2E8F0; border-radius: 8px;
+    /* Cards should have a size policy that allows them to expand/shrink.
+    Default QFrame policy (Preferred, Preferred) is usually fine.
+    Setting a minimum height can be useful for visual consistency. */
+    min-height: 120px;
+    }
+    QLabel[cssClass="cardTitleLabel"] {
+    font-size: 16px; font-weight: 600; color: #111827; margin-bottom: 4px;
+    }
+    QLabel[cssClass="cardDescriptionLabel"] {
+    font-size: 14px; color: #4B5563; word-wrap: true;
+    }
+    QLabel#footerLabel {
+    font-size: 12px; color: #6B7280; qproperty-alignment: AlignCenter;
+    padding: 15px; border-top: 1px solid #E5E7EB;
+    }
+   </string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout_0" stretch="0,1,0">
+    <property name="spacing"><number>0</number></property>
+    <property name="leftMargin"><number>0</number></property>
+    <property name="topMargin"><number>0</number></property>
+    <property name="rightMargin"><number>0</number></property>
+    <property name="bottomMargin"><number>0</number></property>
+    <item>
+     <widget class="QLabel" name="headerTitleLabel">
+      <property name="text"><string>Payment Certificates Generator</string></property>
+      <property name="indent"><number>20</number></property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QScrollArea" name="scrollArea">
+      <property name="widgetResizable"><bool>true</bool></property>
+      <property name="styleSheet"><string notr="true">QScrollArea { border: none; }</string></property>
+      <widget class="QWidget" name="scrollAreaWidgetContents">
+       <property name="geometry">
+        <rect><x>0</x><y>0</y><width>988</width><height>728</height></rect>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_main_content" stretch="0,0,0,0,1">
+        <property name="leftMargin"><number>40</number></property>
+        <property name="topMargin"><number>40</number></property>
+        <property name="rightMargin"><number>40</number></property>
+        <property name="bottomMargin"><number>40</number></property>
+        <property name="spacing"><number>20</number></property>
+        <item>
+         <widget class="QLabel" name="mainTitleLabel">
+          <property name="text"><string>Generate Professional Payment Certificates</string></property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="subtitleLabel">
+          <property name="text"><string>Create, manage, and export payment certificates for your projects with ease.</string></property>
+          <property name="alignment"><set>Qt::AlignCenter</set></property>
+          <property name="wordWrap"><bool>true</bool></property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_buttons">
+          <property name="spacing"><number>15</number></property>
+          <property name="topMargin"><number>20</number></property>
+          <property name="bottomMargin"><number>20</number></property>
+          <item><spacer name="horizontalSpacer_3"><property name="orientation"><enum>Qt::Horizontal</enum></property><property name="sizeHint" stdset="0"><size><width>40</width><height>20</height></size></property></spacer></item>
+          <item><widget class="QPushButton" name="viewProjectsButton"><property name="text"><string>View Projects</string></property><property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property></widget></item>
+          <item><widget class="QPushButton" name="createProjectButton"><property name="text"><string>Create New Project</string></property><property name="cursor"><cursorShape>PointingHandCursor</cursorShape></property></widget></item>
+          <item><spacer name="horizontalSpacer_4"><property name="orientation"><enum>Qt::Horizontal</enum></property><property name="sizeHint" stdset="0"><size><width>40</width><height>20</height></size></property></spacer></item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QWidget" name="featuresContainer" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_features">
+           <property name="spacing"><number>30</number></property>
+           <item>
+            <widget class="QFrame" name="featureCard1">
+             <property name="objectName"><string>featureCard</string></property>
+             <property name="frameShape"><enum>QFrame::StyledPanel</enum></property>
+             <property name="frameShadow"><enum>QFrame::Raised</enum></property>
+             <layout class="QVBoxLayout" name="verticalLayout_card1" stretch="0,0,1">
+              <property name="leftMargin"><number>20</number></property><property name="topMargin"><number>20</number></property>
+              <property name="rightMargin"><number>20</number></property><property name="bottomMargin"><number>20</number></property>
+              <item><widget class="QLabel" name="cardTitleLabel1"><property name="text"><string>Project Management</string></property><property name="cssClass" stdset="0"><string>cardTitleLabel</string></property></widget></item>
+              <item><widget class="QLabel" name="cardDescriptionLabel1"><property name="text"><string>Create and manage projects with contractor details, contract numbers, and tender sums.</string></property><property name="cssClass" stdset="0"><string>cardDescriptionLabel</string></property></widget></item>
+              <item><spacer name="verticalSpacer_1"><property name="orientation"><enum>Qt::Vertical</enum></property><property name="sizeHint" stdset="0"><size><width>20</width><height>40</height></size></property></spacer></item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QFrame" name="featureCard2">
+             <property name="objectName"><string>featureCard</string></property>
+             <property name="frameShape"><enum>QFrame::StyledPanel</enum></property>
+             <property name="frameShadow"><enum>QFrame::Raised</enum></property>
+             <layout class="QVBoxLayout" name="verticalLayout_card2" stretch="0,0,1">
+              <property name="leftMargin"><number>20</number></property><property name="topMargin"><number>20</number></property>
+              <property name="rightMargin"><number>20</number></property><property name="bottomMargin"><number>20</number></property>
+              <item><widget class="QLabel" name="cardTitleLabel2"><property name="text"><string>Certificate Generation</string></property><property name="cssClass" stdset="0"><string>cardTitleLabel</string></property></widget></item>
+              <item><widget class="QLabel" name="cardDescriptionLabel2"><property name="text"><string>Generate certificates with automatic calculations for VAT, retention, and total payable amounts.</string></property><property name="cssClass" stdset="0"><string>cardDescriptionLabel</string></property></widget></item>
+              <item><spacer name="verticalSpacer_2"><property name="orientation"><enum>Qt::Vertical</enum></property><property name="sizeHint" stdset="0"><size><width>20</width><height>40</height></size></property></spacer></item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QFrame" name="featureCard3">
+             <property name="objectName"><string>featureCard</string></property>
+             <property name="frameShape"><enum>QFrame::StyledPanel</enum></property>
+             <property name="frameShadow"><enum>QFrame::Raised</enum></property>
+             <layout class="QVBoxLayout" name="verticalLayout_card3" stretch="0,0,1">
+              <property name="leftMargin"><number>20</number></property><property name="topMargin"><number>20</number></property>
+              <property name="rightMargin"><number>20</number></property><property name="bottomMargin"><number>20</number></property>
+              <item><widget class="QLabel" name="cardTitleLabel3"><property name="text"><string>PDF Export &amp; Editing</string></property><property name="cssClass" stdset="0"><string>cardTitleLabel</string></property></widget></item>
+              <item><widget class="QLabel" name="cardDescriptionLabel3"><property name="text"><string>Export certificates as professional PDFs and edit them before final download.</string></property><property name="cssClass" stdset="0"><string>cardDescriptionLabel</string></property></widget></item>
+              <item><spacer name="verticalSpacer_3"><property name="orientation"><enum>Qt::Vertical</enum></property><property name="sizeHint" stdset="0"><size><width>20</width><height>40</height></size></property></spacer></item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_main">
+          <property name="orientation"><enum>Qt::Vertical</enum></property>
+          <property name="sizeHint" stdset="0"><size><width>20</width><height>40</height></size></property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="footerLabel">
+      <property name="text"><string>© 2025 Payment Certificates Generator</string></property>
+     </widget>
+    </item>
+   </layout>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget><class>QLabel</class><extends>QLabel</extends><header>customwidgets.h</header></customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
+
