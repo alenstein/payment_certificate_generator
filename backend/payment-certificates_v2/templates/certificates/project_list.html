@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}Projects - Payment Certificates Generator{% endblock %}
+
+{% block content %}
+<div class="px-4 py-6 sm:px-0">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold text-gray-900">My Projects</h1>
+        <a href="{% url 'project_create' %}" class="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700">
+            Create New Project
+        </a>
+    </div>
+
+    {% if projects %}
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {% for project in projects %}
+                <div class="bg-white rounded-lg shadow-sm border overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="bg-gray-50 px-6 py-4">
+                        <h3 class="text-lg font-semibold text-gray-900 truncate">{{ project.name_of_contractor }}</h3>
+                        <p class="text-sm text-gray-600">{{ project.contract_no }}</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Vote No:</span>
+                                <span class="font-medium">{{ project.vote_no }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Tender Sum:</span>
+                                <span class="font-medium">${{ project.tender_sum|floatformat:2 }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Certificates:</span>
+                                <span class="font-medium">{{ project.certificates.count }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Created:</span>
+                                <span class="font-medium">{{ project.created_at|date:"M d, Y" }}</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 pt-4 border-t space-y-2">
+                            <div class="flex justify-between">
+                                <a href="{% url 'project_detail' project.pk %}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                    View Details
+                                </a>
+                                <a href="{% url 'project_update' project.pk %}" class="text-gray-600 hover:text-gray-800 text-sm font-medium">
+                                    Edit
+                                </a>
+                            </div>
+                            <div class="flex space-x-2">
+                                <a href="{% url 'certificate_create' project_pk=project.pk %}" class="flex-1 bg-green-600 text-white px-3 py-2 rounded text-sm font-medium hover:bg-green-700 text-center">
+                                    + New Certificate
+                                </a>
+                                {% if project.certificates.exists %}
+                                    <a href="{% url 'project_detail' project.pk %}" class="flex-1 bg-gray-600 text-white px-3 py-2 rounded text-sm font-medium hover:bg-gray-700 text-center">
+                                        View Certificates
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if is_paginated %}
+            <div class="mt-8 flex justify-center">
+                <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                    {% if page_obj.has_previous %}
+                        <a href="?page={{ page_obj.previous_page_number }}" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            Previous
+                        </a>
+                    {% endif %}
+                    
+                    <span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                    </span>
+                    
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                            Next
+                        </a>
+                    {% endif %}
+                </nav>
+            </div>
+        {% endif %}
+    {% else %}
+        <div class="text-center py-12">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+            <h2 class="mt-2 text-xl font-medium text-gray-900">No projects found</h2>
+            <p class="mt-1 text-gray-500">Get started by creating your first project</p>
+            <div class="mt-6">
+                <a href="{% url 'project_create' %}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+                    <svg class="-ml-1 mr-2 h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                    </svg>
+                    Create Your First Project
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

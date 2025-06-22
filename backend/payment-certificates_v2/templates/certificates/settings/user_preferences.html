@@ -1,0 +1,223 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}User Preferences - Payment Certificates{% endblock %}
+
+{% block extra_css %}
+<style>
+    .settings-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .settings-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        padding: 24px;
+        margin-bottom: 20px;
+    }
+
+    .settings-header {
+        border-bottom: 1px solid #e5e7eb;
+        padding-bottom: 16px;
+        margin-bottom: 24px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #374151;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        font-size: 14px;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+    }
+
+    .btn-primary {
+        background-color: #3b82f6;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: #2563eb;
+    }
+
+    .btn-secondary {
+        background-color: #6b7280;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background-color: #4b5563;
+    }
+
+    .alert {
+        padding: 12px 16px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+    }
+
+    .alert-success {
+        background-color: #d1fae5;
+        border: 1px solid #a7f3d0;
+        color: #065f46;
+    }
+
+    .alert-error {
+        background-color: #fee2e2;
+        border: 1px solid #fecaca;
+        color: #991b1b;
+    }
+
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+        width: auto;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="settings-container">
+    <div class="settings-header">
+        <h1>User Preferences</h1>
+        <p class="text-muted">Customize your payment certificate generation settings</p>
+    </div>
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        <!-- General Preferences -->
+        <div class="settings-card">
+            <h2>General Preferences</h2>
+
+            <div class="form-group">
+                <label class="form-label" for="default_currency">Default Currency</label>
+                <select name="default_currency" id="default_currency" class="form-control">
+                    <option value="USD" {% if user_preferences.default_currency == 'USD' %}selected{% endif %}>USD - US Dollar</option>
+                    <option value="ZIG" {% if user_preferences.default_currency == 'ZIG' %}selected{% endif %}>ZIG - Zimbabwe Gold</option>
+                    <option value="EUR" {% if user_preferences.default_currency == 'EUR' %}selected{% endif %}>EUR - Euro</option>
+                    <option value="GBP" {% if user_preferences.default_currency == 'GBP' %}selected{% endif %}>GBP - British Pound</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="company_name">Company Name</label>
+                <input type="text" name="company_name" id="company_name" class="form-control"
+                       value="{{ user_preferences.company_name|default:'' }}"
+                       placeholder="Enter your company name">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="company_address">Company Address</label>
+                <textarea name="company_address" id="company_address" class="form-control" rows="3"
+                          placeholder="Enter your company address">{{ user_preferences.company_address|default:'' }}</textarea>
+            </div>
+        </div>
+
+        <!-- Certificate Settings -->
+        <div class="settings-card">
+            <h2>Certificate Settings</h2>
+
+            <div class="form-group">
+                <label class="form-label" for="vat_rate">VAT Rate (%)</label>
+                <input type="number" name="vat_rate" id="vat_rate" class="form-control"
+                       value="{{ user_preferences.vat_rate|default:'15' }}"
+                       step="0.01" min="0" max="100">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="retention_rate">Retention Rate (%)</label>
+                <input type="number" name="retention_rate" id="retention_rate" class="form-control"
+                       value="{{ user_preferences.retention_rate|default:'10' }}"
+                       step="0.01" min="0" max="100">
+            </div>
+
+            <div class="form-group checkbox-group">
+                <input type="checkbox" name="auto_calculate" id="auto_calculate"
+                       {% if user_preferences.auto_calculate %}checked{% endif %}>
+                <label class="form-label" for="auto_calculate">Auto-calculate values</label>
+            </div>
+
+            <div class="form-group checkbox-group">
+                <input type="checkbox" name="include_signature_lines" id="include_signature_lines"
+                       {% if user_preferences.include_signature_lines %}checked{% endif %}>
+                <label class="form-label" for="include_signature_lines">Include signature lines in PDF</label>
+            </div>
+        </div>
+
+        <!-- PDF Settings -->
+        <div class="settings-card">
+            <h2>PDF Settings</h2>
+
+            <div class="form-group">
+                <label class="form-label" for="pdf_format">PDF Format</label>
+                <select name="pdf_format" id="pdf_format" class="form-control">
+                    <option value="A4" {% if user_preferences.pdf_format == 'A4' %}selected{% endif %}>A4</option>
+                    <option value="Letter" {% if user_preferences.pdf_format == 'Letter' %}selected{% endif %}>Letter</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="pdf_orientation">PDF Orientation</label>
+                <select name="pdf_orientation" id="pdf_orientation" class="form-control">
+                    <option value="portrait" {% if user_preferences.pdf_orientation == 'portrait' %}selected{% endif %}>Portrait</option>
+                    <option value="landscape" {% if user_preferences.pdf_orientation == 'landscape' %}selected{% endif %}>Landscape</option>
+                </select>
+            </div>
+
+            <div class="form-group checkbox-group">
+                <input type="checkbox" name="include_watermark" id="include_watermark"
+                       {% if user_preferences.include_watermark %}checked{% endif %}>
+                <label class="form-label" for="include_watermark">Include watermark</label>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Save Preferences</button>
+            <a href="{% url 'settings_dashboard' %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

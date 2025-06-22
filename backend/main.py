@@ -10,8 +10,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setMinimumSize(QSize(990, 822))
 
         try:
-            # Assuming GUI folder is in the same directory as the script
-            # or the script is run from a context where ./GUI is valid.
             uic.loadUi("../GUI/pcg-main-screen.ui", self)
         except FileNotFoundError:
             print("Error: payment_cert_generator.ui not found in ./GUI/ folder.")

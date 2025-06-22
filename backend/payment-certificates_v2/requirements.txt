@@ -1,0 +1,9 @@
+Django
+psycopg2
+python-dotenv
+reportlab==4.0.7
+psycopg2-binary==2.9.7
+whitenoise==6.6.0
+gunicorn==21.2.0
+python-decouple==3.8
+

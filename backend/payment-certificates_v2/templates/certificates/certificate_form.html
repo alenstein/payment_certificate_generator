@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - Payment Certificates Generator{% endblock %}
+
+{% block content %}
+<div class="px-4 py-6 sm:px-0">
+    <div class="max-w-2xl mx-auto">
+        <div class="bg-white rounded-lg shadow-sm border">
+            <div class="px-6 py-4 border-b">
+                <h1 class="text-xl font-semibold text-gray-900">{{ title }}</h1>
+            </div>
+            <div class="p-6">
+                <!-- Project Information -->
+                <div class="mb-6 p-4 bg-blue-50 rounded-lg">
+                    <h2 class="text-lg font-medium text-gray-900 mb-2">Project Information</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <span class="font-medium text-gray-700">Contractor:</span>
+                            <span class="text-gray-900">{{ project.name_of_contractor }}</span>
+                        </div>
+                        <div>
+                            <span class="font-medium text-gray-700">Contract:</span>
+                            <span class="text-gray-900">{{ project.contract_no }}</span>
+                        </div>
+                        <div>
+                            <span class="font-medium text-gray-700">Vote No:</span>
+                            <span class="text-gray-900">{{ project.vote_no }}</span>
+                        </div>
+                        <div>
+                            <span class="font-medium text-gray-700">Tender Sum:</span>
+                            <span class="text-gray-900">${{ project.tender_sum|floatformat:2 }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                {% if form.non_field_errors %}
+                    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <form method="post" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    <div>
+                        <label for="{{ form.currency.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                            {{ form.currency.label }}
+                        </label>
+                        {{ form.currency }}
+                        {% if form.currency.errors %}
+                            <p class="text-red-600 text-sm mt-1">{{ form.currency.errors.0 }}</p>
+                        {% endif %}
+                        <p class="text-xs text-gray-500 mt-1">Select the currency for this certificate</p>
+                    </div>
+
+                    <div>
+                        <label for="{{ form.current_claim_excl_vat.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                            {{ form.current_claim_excl_vat.label }}
+                        </label>
+                        {{ form.current_claim_excl_vat }}
+                        {% if form.current_claim_excl_vat.errors %}
+                            <p class="text-red-600 text-sm mt-1">{{ form.current_claim_excl_vat.errors.0 }}</p>
+                        {% endif %}
+                        <p class="text-xs text-gray-500 mt-1">Enter the current claim amount excluding VAT</p>
+                    </div>
+
+                    <div>
+                        <label for="{{ form.previous_payment_excl_vat.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                            {{ form.previous_payment_excl_vat.label }}
+                        </label>
+                        {{ form.previous_payment_excl_vat }}
+                        {% if form.previous_payment_excl_vat.errors %}
+                            <p class="text-red-600 text-sm mt-1">{{ form.previous_payment_excl_vat.errors.0 }}</p>
+                        {% endif %}
+                        <p class="text-xs text-gray-500 mt-1">Enter any previous payments made (excluding VAT)</p>
+                    </div>
+
+                    <!-- Calculation Preview -->
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h3 class="text-sm font-medium text-gray-900 mb-2">Automatic Calculations</h3>
+                        <div class="text-xs text-gray-600 space-y-1">
+                            <p>• VAT will be calculated at 15% of current claim</p>
+                            <p>• Retention will be calculated at 10% of current claim</p>
+                            <p>• Total amount payable = Current claim + VAT - Retention</p>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end space-x-3 pt-6 border-t">
+                        <a href="{% url 'project_detail' project.pk %}" class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            Cancel
+                        </a>
+                        <button type="submit" class="px-4 py-2 bg-blue-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            Create Certificate
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Add some interactivity for calculation preview
+document.addEventListener('DOMContentLoaded', function() {
+    const currentClaimInput = document.getElementById('{{ form.current_claim_excl_vat.id_for_label }}');
+    
+    if (currentClaimInput) {
+        currentClaimInput.addEventListener('input', function() {
+            const amount = parseFloat(this.value) || 0;
+            const vat = amount * 0.15;
+            const retention = amount * 0.10;
+            const total = amount + vat - retention;
+            
+            // You could add a live preview here if desired
+            console.log('Preview calculations:', {
+                current_claim: amount,
+                vat: vat,
+                retention: retention,
+                total_payable: total
+            });
+        });
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+
+{% block title %}Certificate #{{ certificate.id }} - Payment Certificates Generator{% endblock %}
+
+{% block content %}
+<div class="px-4 py-6 sm:px-0">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-bold text-gray-900">Certificate Details</h1>
+        <div class="space-x-2">
+            <a href="{% url 'project_detail' project.id %}" class="border border-gray-300 text-gray-700 px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-50">
+                Back to Project
+            </a>
+            <a href="{% url 'certificate_pdf' project.id certificate.id %}" class="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700">
+                Download PDF
+            </a>
+        </div>
+    </div>
+
+    <div class="grid gap-6 md:grid-cols-2 mb-8">
+        <div class="bg-white rounded-lg shadow-sm border">
+            <div class="px-6 py-4 border-b">
+                <h2 class="text-lg font-semibold text-gray-900">Certificate Information</h2>
+            </div>
+            <div class="p-6">
+                <dl class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <dt class="font-medium text-gray-600">Project:</dt>
+                            <dd class="text-gray-900">{{ project.name_of_contractor }}</dd>
+                        </div>
+                        <div>
+                            <dt class="font-medium text-gray-600">Contract No:</dt>
+                            <dd class="text-gray-900">{{ project.contract_no }}</dd>
+                        </div>
+                        <div>
+                            <dt class="font-medium text-gray-600">Currency:</dt>
+                            <dd class="text-gray-900">{{ certificate.currency }}</dd>
+                        </div>
+                        <div>
+                            <dt class="font-medium text-gray-600">Current Claim (Excl. VAT):</dt>
+                            <dd class="text-gray-900">{{ certificate.currency }} {{ certificate.current_claim_excl_vat|floatformat:2 }}</dd>
+                        </div>
+                        <div>
+                            <dt class="font-medium text-gray-600">VAT Value:</dt>
+                            <dd class="text-gray-900">{{ certificate.currency }} {{ certificate.vat_value|floatformat:2 }}</dd>
+                        </div>
+                        <div>
+                            <dt class="font-medium text-gray-600">Previous Payment (Excl. VAT):</dt>
+                            <dd class="text-gray-900">{{ certificate.currency }} {{ certificate.previous_payment_excl_vat|floatformat:2 }}</dd>
+                        </div>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-sm border">
+            <div class="px-6 py-4 border-b">
+                <h2 class="text-lg font-semibold text-gray-900">Calculations</h2>
+            </div>
+            <div class="p-6">
+                <dl class="space-y-4">
+                    <div class="flex justify-between">
+                        <dt class="font-medium text-gray-600">Value of Work Done (Incl. VAT):</dt>
+                        <dd class="text-gray-900">{{ certificate.currency }} {{ calculations.value_of_workdone_incl_vat|floatformat:2 }}</dd>
+                    </div>
+                    <div class="flex justify-between">
+                        <dt class="font-medium text-gray-600">Total Value of Work Done (Excl. VAT):</dt>
+                        <dd class="text-gray-900">{{ certificate.currency }} {{ calculations.total_value_of_workdone_excl_vat|floatformat:2 }}</dd>
+                    </div>
+                    <div class="flex justify-between">
+                        <dt class="font-medium text-gray-600">Retention (10%):</dt>
+                        <dd class="text-gray-900">{{ certificate.currency }} {{ calculations.retention|floatformat:2 }}</dd>
+                    </div>
+                    <div class="flex justify-between border-t pt-4 mt-4">
+                        <dt class="font-medium text-lg text-gray-900">Total Amount Payable:</dt>
+                        <dd class="font-bold text-lg text-gray-900">{{ certificate.currency }} {{ calculations.total_amount_payable|floatformat:2 }}</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+    </div>
+
+    <!-- PDF Preview -->
+    <div class="bg-white rounded-lg shadow-sm border overflow-hidden">
+        <div class="px-6 py-4 border-b bg-gray-50">
+            <h2 class="text-lg font-semibold text-gray-900">Certificate Preview</h2>
+        </div>
+        <div class="p-8">
+            <div class="max-w-4xl mx-auto bg-white border rounded-lg shadow-sm p-8 font-serif">
+                <div class="text-center mb-8">
+                    <h1 class="text-2xl font-bold uppercase mb-1">Payment Certificate</h1>
+                    <p class="text-sm text-gray-600">Certificate #{{ certificate.id }}</p>
+                </div>
+
+                <div class="mb-8 border-b pb-4">
+                    <h2 class="text-xl font-bold mb-4">Project Details</h2>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p><span class="font-semibold">Contractor:</span> {{ project.name_of_contractor }}</p>
+                            <p><span class="font-semibold">Contract No:</span> {{ project.contract_no }}</p>
+                            <p><span class="font-semibold">Vote No:</span> {{ project.vote_no }}</p>
+                        </div>
+                        <div>
+                            <p><span class="font-semibold">Tender Sum:</span> {{ certificate.currency }} {{ project.tender_sum|floatformat:2 }}</p>
+                            <p><span class="font-semibold">Date:</span> {% now "F d, Y" %}</p>
+                            <p><span class="font-semibold">Currency:</span> {{ certificate.currency }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <h2 class="text-xl font-bold mb-4">Certificate Summary</h2>
+                    <table class="w-full border-collapse">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="border p-2 text-left">Description</th>
+                                <th class="border p-2 text-right">Amount ({{ certificate.currency }})</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="border p-2">Current Claim (Excl. VAT)</td>
+                                <td class="border p-2 text-right">{{ certificate.current_claim_excl_vat|floatformat:2 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="border p-2">VAT (15%)</td>
+                                <td class="border p-2 text-right">{{ certificate.vat_value|floatformat:2 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="border p-2">Previous Payment (Excl. VAT)</td>
+                                <td class="border p-2 text-right">{{ certificate.previous_payment_excl_vat|floatformat:2 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="border p-2">Value of Work Done (Incl. VAT)</td>
+                                <td class="border p-2 text-right">{{ calculations.value_of_workdone_incl_vat|floatformat:2 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="border p-2">Total Value of Work Done (Excl. VAT)</td>
+                                <td class="border p-2 text-right">{{ calculations.total_value_of_workdone_excl_vat|floatformat:2 }}</td>
+                            </tr>
+                            <tr>
+                                <td class="border p-2">Retention (10%)</td>
+                                <td class="border p-2 text-right">{{ calculations.retention|floatformat:2 }}</td>
+                            </tr>
+                            <tr class="font-bold bg-gray-50">
+                                <td class="border p-2">Total Amount Payable</td>
+                                <td class="border p-2 text-right">{{ calculations.total_amount_payable|floatformat:2 }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mb-8">
+                    <h2 class="text-xl font-bold mb-4">Approval</h2>
+                    <div class="grid grid-cols-2 gap-8 mt-8">
+                        <div>
+                            <div class="border-t border-black pt-2 mt-16">
+                                <p class="font-semibold">Authorized Signature</p>
+                                <p class="text-sm text-gray-600">Project Manager</p>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="border-t border-black pt-2 mt-16">
+                                <p class="font-semibold">Authorized Signature</p>
+                                <p class="text-sm text-gray-600">Finance Officer</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-xs text-gray-500 text-center mt-8 pt-4 border-t">
+                    <p>This certificate is issued without prejudice to the rights and obligations of the parties under the Contract.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
